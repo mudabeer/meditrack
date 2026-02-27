@@ -8,24 +8,23 @@
 }
 
 .material-icons.md-20 { font-size: 80px; }
+.material-icons.md-10 { font-size: 50px; }
 
-.card {
+
+.card-features {
     border: none;
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.card:hover {
+.card-features:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 20px rgba(73, 104, 107, 0.644);
 }
 
-.card-features {
-    background-color: rgb(160, 110, 40);
-    color: rgb(239, 244, 244);
-    cursor: pointer;
+.step-title {
+    font-size: 30px;
 }
 
-.card-features:hover {
-    background-color: cadetblue;
-    color:  black;
-}
+.bg-white-shade [
+    background-color
+]
