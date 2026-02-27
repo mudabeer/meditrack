@@ -1,6 +1,54 @@
 {% extends "layout.html" %}
 {% block body %}
 
-    
+    <header class="b-flex bg-color  align-items-center pt-3 mt-5" id="hero">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="header-title">Medi-Track<br>Your Smart Medicine Reminder System</h1>
+                    <p>Never miss a dose again. Medi-Track helps you manage your daily medication schedule with timely alerts and secure tracking.</p>
+                    <div class="d-flex gap-3 mb-3">
+                        <button class="btn btn-primary">discover</button>
+                        <button class="btn btn-primary">get started</button>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center">
+                    <img src="/static/hero-img.jpg" alt="" class="img-fluid hero-img">
+                </div>
+            </div>
+            
+        </div>
+    </header>
+
+    <section id="features" class="py-5 mt-5">
+        <div class="container">
+            <h2 class="title text-center">Feature</h2>
+            <div class="row text-center">
+                <div class="col-lg-4 col-sm-6    my-2">
+                    <div class="card py-4 m-3 px-2 card-features">
+                        <i class="material-icons md-20">alarm</i>
+                        <h5 class="card-title mt-3">Smart Medicine Reminders</h5>
+                        <p class="card-text">Get temly alerts at the right moment so you never miss a dose</p>
+                    </div>
+                </div>
+            
+                <div class="col-lg-4 col-sm-6 my-2">
+                    <div class="card py-4 m-3 px-2 card-features">
+                         <i class="material-icons md-20">medication</i>
+                        <h5 class="card-title mt-3">Easy Medicine Managemnent</h5>
+                        <p class="card-text">Add and update medicine details such as name, dosage, and reminder time with ease.</p>
+                    </div>
+                </div>
+        
+                <div class="col-lg-4 col-sm-6 my-2">
+                    <div class="card py-4 m-3 px-2 card-features">
+                        <i class="material-icons md-20">event_available</i>
+                        <h5 class="card-title mt-3">Organized Schedule View</h5>
+                        <p class="card-text">View all your medicines in one place with clear timing and dosage information.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
 {% endblock %}
