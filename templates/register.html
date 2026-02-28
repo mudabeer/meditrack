@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+
+
+{% block body %}
+    <div class="container " >
+        <div class="row justify-content-center">
+            <div class="col-md-5 ">
+                <div class="card text-center mt-5 p-5   ">
+                    <div class="headbox">
+                        <h1 class="title mb-5">Register</h1>
+                    </div>
+
+                    <form action="/register" method="post">
+                        <div class="row row-gap-3">
+                            <div class="col col-12">
+                                <div class="input-group">
+                                    <div class="form-floating">
+                                        <input type="text" id="First-name" class="form-control" required placeholder="First name here">
+                                        <label for="First-name">First name</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col col-12">
+                                <div class="input-group">
+                                    <div class="form-floating">
+                                        <input type="text" id="Second-name" class="form-control" required placeholder="Second name here">
+                                        <label for="Second-name">Second name</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col col-12">
+                                <div class="input-group">
+
+                                    <div class="form-floating">
+                                        <input type="email" id="email" class="form-control" required placeholder="email here">
+                                        <label for="email">Email</label>
+                                        <div class="invalid-feedback">invalid email</div>
+                                        <div class="valid-feedback">correct email</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+
+                            <div class="col col-12">
+                                <div class="input-group">
+
+                                    <div class="form-floating">
+                                        <input type="password" id="password" class="form-control" required placeholder="password here">
+                                        <label for="password">Password</label>
+                                        <div class="invalid-feedback">invalid password</div>
+                                        <div class="valid-feedback">correct password</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col col-12">
+                                <div class="input-group">
+
+                                    <div class="form-floating">
+                                        <input type="password" id="confirm-password" class="form-control" required placeholder="confirm password here">
+                                        <label for="confirm-password">Confirm Password</label>
+                                        <div class="invalid-feedback">invalid password</div>
+                                        <div class="valid-feedback">correct password</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12"><button class="btn btn-primary sub-button m-2">Register</button></div>
+                        </div>
+                    </form>
+                        
+                    <label>Already have an acccount? <a href="/login">Login</a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,12 +1,21 @@
 {% extends "layout.html" %}
+
+{% block nav_links %}
+
+    <li class="nav-item">
+        <a href="/login" class="nav-link"><button class="btn btn-primary">Login</button></a>
+    </li>
+
+{% endblock%}
+
 {% block body %}
 
     <header class="b-flex bg-color  align-items-center pt-3 mt-5" id="hero">
         <div class="container-fluid">
             <div class="row align-items-center">
-                <div class="col-md-6">
+                <div class="col-md-6 px-3">
                     <h1 class="header-title">Medi-Track<br>Your Smart Medicine Reminder System</h1>
-                    <p>Never miss a dose again. Medi-Track helps you manage your daily medication schedule with timely alerts and secure tracking.</p>
+                    <p>Medi-Track is a web-based medicine reminder and alert system designed to help users manage their daily medication schedule efficiently. It allows you to store medicine details, set reminder times, and receive timely notifications to improve healthcare and medication adherence.</p>
                     <div class="d-flex gap-3 mb-3">
                         <button class="btn btn-primary">discover</button>
                         <button class="btn btn-primary">get started</button>
@@ -53,15 +62,45 @@
 
     <section id="how-it-work" class="py-5 mt-5">
         <div class="container">
-            <div class="title text-center">How MediTrack Work</div>
-            <div class="row ">
-                <div class="col-lg-6 my-2">
+            <h2 class="title text-center mb-5">How MediTrack Work</h2>
+            <div class="row">
+                <div class="col-lg-6 my-2 ">
                     <div class="card py-4 m-3 px-4 ">
-                        <div class="row align-items-center">
-                            <div class="col-2"><i class="material-icons md-10">person_add</i></div>
+                        <div class="row align-items-center gx-5">
+                            <div class="col-2 m-2"><i class="material-icons md-10">person_add</i></div>
                             <div class="col-8"><h5 class="card-title step-title ">Create Your Account</h5></div>
                         </div>
                         <h10>Sign up and log in securely to access your personal medicine reminder dashboard.</h10>
+                    </div>
+                </div>
+            
+                <div class="col-lg-6 my-2 ">
+                    <div class="card py-4 m-3 px-4 ">
+                        <div class="row align-items-center gx-5">
+                            <div class="col-2 m-2"><i class="material-icons md-10">medication</i></div>
+                            <div class="col-8"><h5 class="card-title step-title ">Add Medicine Details</h5></div>
+                        </div>
+                        <h10>Enter your medicine name, dosage, and the time you need to take it.</h10>
+                    </div>
+                </div>
+          
+                <div class="col-lg-6 my-2">
+                    <div class="card py-4 m-3 px-4 ">
+                        <div class="row align-items-center gx-5">
+                            <div class="col-2 m-2"><i class="material-icons md-10">schedule</i></div>
+                            <div class="col-8"><h5 class="card-title step-title ">Set Reminder Schedule</h5></div>
+                        </div>
+                        <h10>The system stores your schedule and continuously checks the current time.</h10>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 my-2">
+                    <div class="card py-4 m-3 px-4 ">
+                        <div class="row align-items-center gx-5">
+                            <div class="col-2 m-2"><i class="material-icons md-10">notifications_active</i></div>
+                            <div class="col-8"><h5 class="card-title step-title ">Get Alert Notifications</h5></div>
+                        </div>
+                        <h10>SWhen it’s time, Medi-Track sends you an instant alert to remind you to take your medicine.</h10>
                     </div>
                 </div>
             </div>

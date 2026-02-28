@@ -2,6 +2,8 @@
     max-height: 500px;
 }
 
+
+
 .header-title{
     font-size: 44px;
     font-weight: bold;
@@ -22,9 +24,33 @@
 }
 
 .step-title {
-    font-size: 30px;
+    font-size: 25px;
 }
 
-.bg-white-shade [
-    background-color
-]
+.bg-white-shade {
+    background-color: aquamarine
+}
+
+.how-it-card {
+    --bs-rows: 3; --bs-columns: 3;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 80px);
+  gap: 10px;
+  text-align: center;
+}
+.box1 { background: #0d6efd; color:white; }
+.box2 { background: #198754; color:white; }
+.box3 { background: #dc3545; color:white; }
+
+.main-card {
+
+    min-width: 200px;
+}
+
+.sub-button {
+    width: 100%;
+} 
