@@ -9,13 +9,17 @@
                     <div class="headbox">
                         <h1 class="title mb-5">Register</h1>
                     </div>
-
+                    {% if alert %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endif %}
                     <form action="/register" method="post">
                         <div class="row row-gap-3">
                             <div class="col col-12">
                                 <div class="input-group">
                                     <div class="form-floating">
-                                        <input type="text" id="First-name" class="form-control" required placeholder="First name here">
+                                        <input type="text" name="first_name" class="form-control" required placeholder="First name here">
                                         <label for="First-name">First name</label>
                                     </div>
                                 </div>
@@ -24,7 +28,7 @@
                             <div class="col col-12">
                                 <div class="input-group">
                                     <div class="form-floating">
-                                        <input type="text" id="Second-name" class="form-control" required placeholder="Second name here">
+                                        <input type="text" name="second-name" class="form-control" required placeholder="Second name here">
                                         <label for="Second-name">Second name</label>
                                     </div>
                                 </div>
@@ -34,7 +38,17 @@
                                 <div class="input-group">
 
                                     <div class="form-floating">
-                                        <input type="email" id="email" class="form-control" required placeholder="email here">
+                                        <input type="text" name="user_name" class="form-control" required placeholder="user_name here">
+                                        <label for="user_name">User name</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col col-12">
+                                <div class="input-group">
+
+                                    <div class="form-floating">
+                                        <input type="email" name="email" class="form-control" required placeholder="email here">
                                         <label for="email">Email</label>
                                         <div class="invalid-feedback">invalid email</div>
                                         <div class="valid-feedback">correct email</div>
@@ -47,7 +61,7 @@
                                 <div class="input-group">
 
                                     <div class="form-floating">
-                                        <input type="password" id="password" class="form-control" required placeholder="password here">
+                                        <input type="password" name="password" class="form-control" required placeholder="password here">
                                         <label for="password">Password</label>
                                         <div class="invalid-feedback">invalid password</div>
                                         <div class="valid-feedback">correct password</div>
@@ -59,7 +73,7 @@
                                 <div class="input-group">
 
                                     <div class="form-floating">
-                                        <input type="password" id="confirm-password" class="form-control" required placeholder="confirm password here">
+                                        <input type="password" name="confirm-password" class="form-control" required placeholder="confirm password here">
                                         <label for="confirm-password">Confirm Password</label>
                                         <div class="invalid-feedback">invalid password</div>
                                         <div class="valid-feedback">correct password</div>

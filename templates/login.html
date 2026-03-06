@@ -9,7 +9,11 @@
                     <div class="headbox">
                         <h1 class="title mb-5">Login</h1>
                     </div>
-
+                     {% if alert %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endif %}
                     <form action="/login" method="post">
                         <div class="row row-gap-3">
                             <div class="col col-12">
@@ -17,7 +21,7 @@
                                     <div class="input-group-text">✉️</div>
 
                                     <div class="form-floating">
-                                        <input type="username" id="username" class="form-control" required placeholder="username here">
+                                        <input type="username" name="username" class="form-control" required placeholder="username here">
                                         <label for="email">username</label>
                                     </div>
                                 </div>
@@ -28,7 +32,7 @@
                                     <div class="input-group-text">🔒</div>
 
                                     <div class="form-floating">
-                                        <input type="password" id="password" class="form-control" required placeholder="password here">
+                                        <input type="password" name="password" class="form-control" required placeholder="password here">
                                         <label for="password">Password</label>
                                         <div class="invalid-feedback">invalid password</div>
                                         <div class="valid-feedback">correct password</div>
