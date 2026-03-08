@@ -1,17 +1,150 @@
 {% extends "layout.html"%}
 
 {% block body %}
+<div class="container-fluid">
+  <div class="row">
 
-    {% block nav_links %}
-        <li class="nav-item">
-        <a href="#" class="nav-link">Home</a>
-        </li>      
-        <li class="nav-item">
-        <a href="#" class="nav-link">Analysis</a>
-        </li>      
-        <li class="nav-item">
-        <a href="#" class="nav-link">Profile</a>
-        </li>      
-    {% endblock %}
+    <!-- Sidebar -->
+    <div class="col-md-3 col-lg-2 side-navbar text-white sidebar p-4">
+      
+        <div class="d-flex flex-column mb-3 side-nav">
+        
+          <a href="#" class="m-2 mx-4 text-decoration-none link-dark">
+              <p class="fs-4 text-white">.Meditrack</p>
+          </a>
+          <button class="btn btn-light d-md-none md-3" type="button" data-bs-toggle="collapse" data-bs-target="#sideMenu">
+                <i class="material-icons">menu</i>
+          </button>
+          <div class="collapse d-md-block" id="sideMenu">
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <a href="#" class="nav-link text-white d-flex align-items-center active" >
+              <i class="material-icons me-2">home</i>
+              Home
+            </a>
+            </li>
 
+            <li class="nav-item">
+              <a href="#" class="nav-link  d-flex align-items-center " >
+              <i class="material-icons me-2">medication</i>
+              Medicine
+            </a>
+            </li>
+            
+            <li class="nav-item">
+              <a href="#" class="nav-link d-flex align-items-center ">
+                <i class="material-icons me-2 ">analytics</i>
+                Analysis
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="#" class="nav-link d-flex align-items-center ">
+                <i class="material-icons me-2 ">person</i>
+                Profile
+              </a>
+            </li>
+            
+            <li class="nav-item">
+              <a href="#" class="nav-link d-flex align-items-center active-red">
+                <i class="material-icons me-2 ">logout</i>
+                Logout
+              </a>
+            </li>
+            
+            
+          </div>
+          </ul>
+          </div>
+          
+        </div>
+
+
+
+    <!-- Main Content -->
+    <div class="col-md-9 col-lg-10 p-4 main-background ">
+      <div class="hero-section">
+        <h1 class="main-h1">Welcome back!</h1>
+        <p class="main-p">Manage your medicines and stay on track with your health.</p>
+
+        <div class="row g-3 mt-3">
+
+          
+          <div class="col-md-8 quick-action">
+            <div class="row g-3">
+               <!-- Card 1 -->
+              <div class="col-md-6">
+                <div class="card-body">
+                  <span class="material-icons">add_circle</span>
+                  <h6>Add New Medicine</h6>
+                  <p >Add a new medicine with dosage and reminder time.</p>
+                </div>
+              </div>
+
+              <!-- Card 2 -->
+              <div class="col-md-6">
+                <div class="card-body">
+                  <span class="material-icons">calendar_month</span>
+                  <h6>View Medicine Schedule</h6>
+                  <p >See all your medicines and their reminder times.</p>
+                </div>
+              </div>
+
+              <!-- Card 3 -->
+              <div class="col-md-6">
+                <div class="card-body">
+                  <span class="material-icons">edit</span>
+                  <h6>Edit Medicines</h6>
+                  <p >Update medicine details whenever needed.</p>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card-body">
+                  <span class="material-icons">delete</span>
+                  <h6>Delete Medicines</h6>
+                  <p >Remove medicines that are no longer required.</p>
+                </div>
+              </div>
+            </div>
+
+           </div>
+          
+           <div class="col-md-4 today-medi">
+            <div class="row">
+              <div class="col-12">
+                <div class="card-body text-center">
+                  <h5>Today's Medicine Reminders</h5>
+                  <div class="b-flex flex-column">
+                    <div class="b-flex align-items-center justy">
+                      <span class="material-icons" style="color: red;">circle</span>
+                      <h9>Paracetamol</h9>
+                      <p>500 mg • 9:00 AM</p>
+                    </div>
+                    <div>
+                      <span class="material-icons" style="color: green;">circle</span>
+                      <h9>Vitamin D</h9>
+                      <p>1 Tablet • 2:00 PM</p>
+                    </div>
+                    <div>
+                      <span class="material-icons" style="color: blue;">circle</span>
+                      <h9>Insulin</h9>
+                      <p>10 Units • 8:00 PM</p>
+                    </div>
+                    <div>
+                      <span class="material-icons" style="color: yellow;">circle</span>
+                      <h9> Antibiotic</h9>
+                      <p>250 mg • 11:00 PM</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+           </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 {% endblock %} 

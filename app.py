@@ -29,7 +29,7 @@ cursor = conn.cursor(dictionary=True)
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html",show_navbar=True,show_footer=True)
+    return render_template("home.html")
 
 @app.route("/")
 def index():
