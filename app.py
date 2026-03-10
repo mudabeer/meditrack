@@ -25,11 +25,15 @@ conn = mysql.connector.connect(
 
 cursor = conn.cursor(dictionary=True)
 
+@app.route("/logout")
+def logout():
+    session["user_id"] =  ''
+    return redirect("/")
 
-@app.route("/home")
+@app.route("/dashboard")
 @login_required
-def home():
-    return render_template("home.html")
+def dashboard():
+    return render_template("dashboard.html")
 
 @app.route("/")
 def index():
@@ -52,7 +56,7 @@ def login():
             return render_template("login.html",message="Invalid user or password",alert=True)
         else:
             session["user_id"] = user[0]
-            return redirect("/home")
+            return redirect("/dashboard")
     else:
         return render_template("login.html",show_navbar=False,show_footer=False)
 
