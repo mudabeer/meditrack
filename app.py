@@ -4,6 +4,8 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
+
+
 app = Flask(__name__)
 app.secret_key = "worldDomination@12"
 
