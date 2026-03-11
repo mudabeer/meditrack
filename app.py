@@ -17,6 +17,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 # configuration
 conn = mysql.connector.connect(
     host="localhost",
