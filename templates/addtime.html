@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+
+{% block body %}
+        <div class="pagebody ">
+            <div class="d-flex align-items-center justify-content-center">
+                <div class="form-card">
+                <h2 >Edit alarm</h2>
+                <a class="material-icons overlay-close" href="/medicine">close</a>
+                {% if alert %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endif %}
+                <form action="/addtime" method="post" class="d-flex flex-column gap-4 pt-4" id="medicine-form"> 
+
+                <div class="input-group">
+                    <input type="number" class="form-control time-font " name="hour" value="00" min="00" max="24">
+                    <div class="input-group-text" style="font-size: 30px; font-weight: bold;">:</div>
+                    <input type="number" class="form-control time-font" name="mintue" value="00" min="00" max="59">
+                    <span class="material-icons time-close  px-1" id="time-1">close</span>
+                </div>
+                
+                <div class="d-flex align-items-center justify-content-center" id="add-time"><span class="material-icons add-time" >add</span></div>
+                <div class="input-group ">
+                    <div class="input-group-text material-icons pt-3" >medication</div>
+                    <div class="form-floating">
+                        <input type="text" name = "medicine_name" id="medicine_name" class="form-control" required placeholder="medicine name" >
+                        <label for="medicine_name" class="text-dark">medicine name</label>
+                    </div>
+                </div>
+                <div class="input-group ">
+                    <div class="input-group-text material-icons pt-3" ></div>
+                    <div class="form-floating">
+                        <input type="text" name = "dosage" class="form-control" required placeholder="dosage">
+                        <label for="medicine_name" class="text-dark">dosage (units/ml/mg/Tablet)</label>
+                    </div>
+                </div>
+
+                   <div class="days d-flex gap-2 flex-wrap">
+                        <input type="checkbox" name="day" value="su" class="form-check-input"> Su
+                        <input type="checkbox" name="day" value="mo" class="form-check-input"> Mo
+                        <input type="checkbox" name="day" value="tu" class="form-check-input"> Tu
+                        <input type="checkbox" name="day" value="we" class="form-check-input"> We
+                        <input type="checkbox" name="day" value="th" class="form-check-input"> Th
+                        <input type="checkbox" name="day" value="fr" class="form-check-input"> Fr
+                        <input type="checkbox" name="day" value="sa" class="form-check-input"> Sa
+                    </div>
+
+                <hr>
+                <div class="d-flex align-items-center justify-content-center gap-4" >
+                    <button class="btn btn-primary" style="width: 100px;" name="action" value="save">Save</button>
+                    <button class="btn btn-danger" style="width: 100px;" name="action" value="delete">delete</button>
+                 </div>
+                </form>
+                 
+            </div>
+            </div>
+            
+        </div>
+{% endblock %}

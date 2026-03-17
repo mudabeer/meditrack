@@ -1,0 +1,29 @@
+{% extends "dashLayout.html" %}
+
+{% block main %}
+    
+    <div class="container-fiuld p-2 " >
+        <div class="row medicine g-3">
+
+            {% for medicine in medicines %}
+                <div class="col-12 col-lg-6">
+                <div class="basic-card d-flex flex-column gap-1">
+                    <div class="form-check form-switch ">
+                        <input class="form-check-input" type="checkbox" role="switch" id="Insulin" checked />
+                    </div>
+
+                    <h1>{{ medicine["reminder_time"] }}</h1>
+                    <span class="material-icons">alarm</span> 
+                    <p class="des-p">in 5 hours, 50 minutes</p>
+                    <h3 class="">{{ medicine["name"] }}</h3>
+                    <p>{{ medicine["day_of_week"] }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        
+       
+        </div>
+    </div>
+    <a class="material-icons add-card basic-card" id="add-medicine" href="/addtime" >add</a>
+    
+{% endblock %}

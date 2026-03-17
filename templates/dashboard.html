@@ -1,73 +1,7 @@
-{% extends "layout.html"%}
+{% extends "dashLayout.html"%}
 
-{% block body %}
-<div class="pagebody">
+{% block main %}
 
-    <!-- Mobile navbar -->
-    <nav class="navbar navbar-dark bg-dark d-md-none">
-        <div class="container-fluid">
-            <div class="navbar-brand" >Meditrak</div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobile-navbar">
-            <span class="navbar-toggler-icon"></span>
-            </button>
-        </div>
-    </nav>  
-    <div class="collpase bg-dark d-md-none mobile-navbar-link" id="mobile-navbar">
-        <ul class="nav flex-column p-3">
-            <li class="nav-item"><a href="/dashboard" class="nav-link white-text active">home</a></li>
-            <li class="nav-item"><a href="#" class="nav-link white-text">medicine</a></li>
-            <li class="nav-item"><a href="#" class="nav-link white-text">analysic</a></li>
-            <li class="nav-item"><a href="/logout" class="nav-link white-text">Profile</a></li>
-        </ul>
-    </div>
-
-   
-    <!-- Sidebar -->
-    <div class="side-navbar flex-column p-4 d-md-block d-none">
-
-      <a href="#" class="m-2 mx-4 text-decoration-none">
-          <p class="fs-4 text-white">.Meditrack</p>
-      </a>
-
-      <ul class="nav nav-pills flex-column">
-        <li class="nav-item">
-          <a href="/dashboard" class="nav-link text-white d-flex align-items-center active" >
-            <i class="material-icons me-2">home</i>Home
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a href="#" class="nav-link  d-flex align-items-center " >
-            <i class="material-icons me-2">medication</i>Medicine
-          </a>
-        </li>
-        
-        <li class="nav-item">
-          <a href="#" class="nav-link d-flex align-items-center ">
-            <i class="material-icons me-2 ">analytics</i>Analysis
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a href="#" class="nav-link d-flex align-items-center ">
-            <i class="material-icons me-2 ">person</i>Profile
-          </a>
-        </li>
-        
-        <li class="nav-item">
-          <a href="/logout" class="nav-link d-flex align-items-center text-danger">
-            <i class="material-icons me-2 ">logout</i>Logout
-          </a>
-        </li>
-      </ul>
-          
-    </div>
-
-
-
-    <!-- Main Content -->
-    <div class="main-sec p-2">
-      <div class="container-fluid">
         <h1 class="main-h1">Welcome back!</h1>
         <p class="main-p">Manage your medicines and stay on track with your health.</p>
 
@@ -78,62 +12,62 @@
             <div class="row g-3 ">
               <div class="col-md-3 col-6">
                 <div class="card quick-info ">
-                  <h2>6</h2>
+                  <h2>{{ totalMedicine["totalMedicine"] }}</h2>
                   <p>Total Medicines</p>
                 </div>
               </div>
               <div class="col-6 col-md-3">
                 <div class="card quick-info">
-                  <h2>3</h2>
+                  <h2>{{ todayTotal["todayReminders"] }}</h2>
                   <p>Today's Reminders</p>
                 </div>
               </div>
               <div class="col-6 col-md-3">
                 <div class="card quick-info">
-                  <h2>3</h2>
+                  <h2>{{ upcomingReminders["upcomingReminder"] }}</h2>
                   <p>Upcoming Reminder</p>
                 </div>
               </div>
               <div class="col-6 col-md-3">
                 <div class="card quick-info">
-                  <h2>6</h2>
+                  <h2>{{ activeSch["active"] }}</h2>
                   <p>Active Schedule</p>
                 </div>
               </div>
 
-              <!-- quick-action -->
+              <!-- basic-card home-b-card -->
                <!-- Card 1 -->
               <div class="col-md-6">
-                <div class="card quick-action">
+                <div class="basic-card home-b-card">
                   <span class="material-icons">add_circle</span>
                   <h6>Add New Medicine</h6>
-                  <p >Add a new medicine with dosage and reminder time.</p>
+                  <p class="des-p">Add a new medicine with dosage and reminder time.</p>
                 </div>
               </div>
 
               <!-- Card 2 -->
               <div class="col-md-6">
-                <div class="card-body quick-action">
+                <div class="basic-card home-b-card">
                   <span class="material-icons">calendar_month</span>
                   <h6>View Medicine Schedule</h6>
-                  <p >See all your medicines and their reminder times.</p>
+                  <p class="des-p">See all your medicines and their reminder times.</p>
                 </div>
               </div>
 
               <!-- Card 3 -->
               <div class="col-md-6">
-                <div class="card-body quick-action">
+                <div class="basic-card home-b-card">
                   <span class="material-icons">edit</span>
                   <h6>Edit Medicines</h6>
-                  <p >Update medicine details whenever needed.</p>
+                  <p class="des-p">Update medicine details whenever needed.</p>
                 </div>
               </div>
               <!-- Card 4 -->
               <div class="col-md-6">
-                <div class="card-body quick-action">
+                <div class=" basic-card home-b-card">
                   <span class="material-icons">delete</span>
                   <h6>Delete Medicines</h6>
-                  <p >Remove medicines that are no longer required.</p>
+                  <p class="des-p">Remove medicines that are no longer required.</p>
                 </div>
               </div>
             </div>
@@ -143,37 +77,23 @@
                 <div class="card text-center today-medi">
                   <h5>Today's Medicine Reminders</h5>
                   <div class="b-flex flex-column">
-                    <div class="b-flex align-items-center justy">
-                      <h9>Paracetamol</h9>
-                      <p>500 mg • 9:00 AM</p>
-                    </div>
-                    <div>
-                      <h9>Vitamin D</h9>
-                      <p>1 Tablet • 2:00 PM</p>
-                    </div>
-                    <div>
-                      <h9>Insulin</h9>
-                      <p>10 Units • 8:00 PM</p>
-                    </div>
-                    <div>
-                      <h9> Antibiotic</h9>
-                      <p>250 mg • 11:00 PM</p>
-                    </div>
+                    {% for todayReminder in todayReminders %}
+                        <div>
+                          <h6>{{ todayReminder["name"] }}</h6>
+                          <p>{{ todayReminder["dosage"]}} • {{todayReminder["time"] }}</p>
+                        </div>
+                    {% endfor %}
                   </div>
                 </div>
             </div>
            
            <div class="col-10 ">
-            <div class="card-body call-sec">
+            <div class="basic-card call-sec">
               <h4>Stay Consistent With Your Medication</h4>
-              <p>Medi-Track helps you stay healthy by reminding you to take your medicines at the right time.</p>
+              <p class="des-p">Medi-Track helps you stay healthy by reminding you to take your medicines at the right time.</p>
             </div>
            </div>
           
         </div>
-      </div>
-    </div>
 
-  </div>
-</div>
 {% endblock %} 

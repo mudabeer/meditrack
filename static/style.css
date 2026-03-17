@@ -101,7 +101,9 @@
 /* main-sec */
 .main-sec {
     margin-left: 220px;
+    
 }
+
 @media (max-width: 768px) {
 
     .main-sec {
@@ -118,13 +120,39 @@
 
 }
 
+/* profile picture */
+.profile-pic {
+    border-radius: 50%;
+    max-width: 150px;
+    border: 2px solid white;
+}
+
+.edit-button {
+    background-color: none !important;
+}
+
 /* dashboard */
 .pagebody {
     background: linear-gradient(135deg, #020617, #0b1f3a, #020617);
+    min-height: 100vh;
 }
 
+
+
+.form-switch {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.medicine-card {
+    position: relative;
+    padding: 20px;
+}
+
+
 /* quickaction & call-sec */
-.main-sec .quick-action,.main-sec .call-sec {
+.basic-card {
     color:#f0f6fc;
     font-weight:600;
     padding: 20px;
@@ -134,30 +162,38 @@
     box-shadow: 0 8px 25px rgba(0,0,0,0.35);
     transition: all 0.3s ease;
     border-radius: 20px;
+}
+
+.home-b-card{
     height: 168px;
 }
-.main-sec .quick-action:hover{
+
+.medicine {
+    height: 200px;
+}
+
+.basic-card:hover{
     color:#f0f6fcec;
     background-color: #21262d4b;
     border:1px solid #30363d34;
     box-shadow:0 4px 10px rgb(0, 0, 0);
     transition: 2px 0.2s ease-in; 
 }
-.main-sec .quick-action span {
+.basic-card span {
     margin-bottom: 8px;
     font-size: 28px;
 }
-.quick-action:hover span,
-.quick-action:hover h6,
-.quick-action:hover p{
+.home-b-card:hover span,
+.home-b-card:hover h6,
+.home-b-card:hover p{
     color:#f0f6fc9a !important;
 }
-.quick-action:active h6,
-.quick-action:active span,
-.quick-action:active p{
+.home-b-card:active h6,
+.home-b-card:active span,
+.home-b-card:active p{
     color:#367dc4ac !important;
 }
-.main-sec .quick-action p,.call-sec p{
+.des-p {
     color:#f0f6fcf4;
     font-weight:200;
 }
@@ -195,4 +231,67 @@
 }
 
 
+.form-card{
+    width:420px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(18px);
+    color:white;
+    border-radius:12px;
+    padding:30px;
 
+    box-shadow:0 15px 40px rgba(0,0,0,0.25);
+}
+
+.overlay-close {
+    position: absolute;
+    top: 12px;
+    color: #020617 !important;
+    right: 12px;
+    text-decoration: none;
+    font-size: 30px !important;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.overlay-close:hover {
+    color: #02061728 !important;
+}
+
+.time-font {
+    font-family: 'Orbitron', sans-serif;
+}
+
+.add-card {
+    position: absolute;
+    bottom: 12px;
+    text-decoration: none;
+    font-size: 40px !important;
+    padding: 4px !important;
+}
+
+.time-close {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px !important;
+    color: #020617;
+    cursor: pointer;
+    background-color: white;
+}
+
+.time-close:hover {
+    color: #0206176a;
+}
+
+.time-close:active {
+    color: #0d6dfda1;
+}
+
+.add-time {
+    font-size: 30px !important;
+    cursor: pointer;
+}
+
+.add-time:hover {
+    color: rgba(255, 255, 255, 0.543);
+}
