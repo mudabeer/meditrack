@@ -6,10 +6,10 @@
             <div class="d-flex flex-row align-items-center gap-4">
                 <img class="profile-pic" src="https://imgs.search.brave.com/reX3qA0iXDc1KiPIF8g1h-xObqTr1FXE6lqbiyLyndY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNTg3/ODA1MDc4L3ZlY3Rv/ci9wcm9maWxlLXBp/Y3R1cmUtdmVjdG9y/LWlsbHVzdHJhdGlv/bi5qcGc_cz02MTJ4/NjEyJnc9MCZrPTIw/JmM9c1VDZHgtTGlr/cWU3ZUJFY2JuMUZU/OHliT1FRSFhEZ0JL/THNKYzk5TXRDQT0" alt="profile picture">
                 <div class="text-white">
-                    <h3 class="m-0">user_Person</h3>
-                    <p class="m-0 des-p">Person</p>
+                    <h3 class="m-0">{{ user["user_name"] }}</h3>
+                    <p class="m-0 des-p">{{ user["full_name"] }}</p>
                     <p>Male</p>
-                    <button class="bg-none"><span class="material-icons">edit</span></button>
+                    <a class="text-decoration-none" href="#"><span class="material-icons">edit</span></a>
                 </div>
             </div>
         </div>
@@ -17,19 +17,19 @@
             <div class="basic-card">
                 <div class="row flex-row r">
                     <div class="col-4"><p>User Name</p></div>
-                    <div class="col-3"><p>user_person</p></div>
+                    <div class="col-3"><p>{{user["user_name"]}}</p></div>
                     <div class="col-2 ">
                         
                     </div>
                     <hr>
                     <div class="col-4"><p>Full Name</p></div>
-                    <div class="col-6 "><p>Person</p></div>
+                    <div class="col-6 "><p>{{user["full_name"]}}</p></div>
                     <hr>
                     <div class="col-4"><p>Gender</p></div>
                     <div class="col-6 "><p>Male</p></div>
                     <hr>
                     <div class="col-4"><p>Email</p></div>
-                    <div class="col-6 "><p>person@email.com</p></div>
+                    <div class="col-6 "><p>{{user["email"]}}</p></div>
                     <hr>
                 </div>
             </div>

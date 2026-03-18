@@ -35,7 +35,7 @@ def logout():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    user_id = session["user_id"]["id"]
+    user_id = session["user_id"]
     cursor.execute("""SELECT m.name as name,r.reminder_time as time,m.dose as dosage 
                    FROM medicine m JOIN reminder_logs r 
                    WHERE r.day_of_week  = substring(dayname(curdate()),1,2) AND m.user_id = %s"""
@@ -46,7 +46,7 @@ def dashboard():
     totalMedicine = cursor.fetchone()
 
     if not todayReminders:
-        return render_template("dashboard.html",totalMedicine=totalMedicine[0])
+        return render_template("dashboard.html",totalMedicine=totalMedicine[0],home="active")
     else:
         cursor.execute("""SELECT count(id) as upcomingReminder FROM reminder_logs WHERE medicine_id in  
                        (SELECT id FROM medicine WHERE user_id = %s) 
@@ -65,18 +65,18 @@ def dashboard():
                         ,(user_id,))
         activeSch = cursor.fetchone()
 
-        return render_template("dashboard.html",todayReminders=todayReminders,todayTotal=todayTotal,totalMedicine=totalMedicine,upcomingReminders=upcomingReminders,activeSch=activeSch)
+        return render_template("dashboard.html",todayReminders=todayReminders,todayTotal=todayTotal,totalMedicine=totalMedicine,upcomingReminders=upcomingReminders,activeSch=activeSch,home="active")
 
 @app.route("/medicine", methods=["GET","POST"])
 @login_required
 def medicine():
-        user_id = session["user_id"]["id"]
+        user_id = session["user_id"]
         cursor.execute("SELECT m.name,r.reminder_time,GROUP_CONCAT(DISTINCT r2.day_of_week ORDER BY r2.day_of_week) AS day_of_week FROM medicine m JOIN reminder_logs r on m.id = r.medicine_id JOIN reminder_logs r2 ON m.id = r2.medicine_id WHERE m.user_id = %s GROUP BY m.id,r.reminder_time ",(user_id,))
         medicines = cursor.fetchall()
         if not medicines :
-            return render_template("medicine.html")
+            return render_template("medicine.html",medicine="active")
         else:
-            return render_template("medicine.html",medicines=medicines)
+            return render_template("medicine.html",medicines=medicines,medicine="active")
 
 @app.route("/addtime",methods=["GET","POST"])
 @login_required
@@ -104,7 +104,7 @@ def addtime():
         if len(days)  < 0:
             return render_template("medicine.html",message="select at least one day",alert=True)
         
-        user_id = session["user_id"]["id"]
+        user_id = session["user_id"]
 
         cursor.execute("SELECT * FROM medicine WHERE name = %s AND user_id = %s",(medicine_name,user_id))
         row = cursor.fetchall()
@@ -135,12 +135,15 @@ def addtime():
 @app.route("/analysis")
 @login_required
 def analysis():
-    return render_template("analysis.html")
+    return render_template("analysis.html",analysis="active")
 
 @app.route("/profile")
 @login_required
 def profile():
-    return render_template("profile.html")
+    cursor.execute("SELECT * FROM users WHERE id = %s",(session["user_id"],))
+    user = cursor.fetchall()
+
+    return render_template("profile.html",profile="active",user=user[0])
 
 @app.route("/")
 def index():
@@ -164,7 +167,7 @@ def login():
         if len(user) != 1 or not check_password_hash(user[0]["password_hash"],password):
             return render_template("login.html",message="Invalid user or password",alert=True)
         else:
-            session["user_id"] = user[0]
+            session["user_id"] = user[0]["id"]
             return redirect("/dashboard")
     else:
         return render_template("login.html",show_navbar=False,show_footer=False)

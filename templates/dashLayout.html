@@ -5,7 +5,7 @@
         <!-- Mobile navbar -->
         <nav class="navbar navbar-dark bg-dark d-md-none">
             <div class="container-fluid">
-                <div class="navbar-brand" >Meditrak</div>
+                <div class="navbar-brand" ><a href="/" class="text-decoration-none text-white">Meditrak</a></div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobile-navbar">
                 <span class="navbar-toggler-icon"></span>
                 </button>
@@ -25,31 +25,31 @@
         <!-- Sidebar -->
         <div class="side-navbar flex-column p-4 d-md-block d-none">
 
-        <a href="#" class="m-2 mx-4 text-decoration-none">
+        <a href="/" class="m-2 mx-4 text-decoration-none">
             <p class="fs-4 text-white">.Meditrack</p>
         </a>
 
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">
-            <a href="/dashboard" class="nav-link text-white d-flex align-items-center active" >
+            <a href="/dashboard" class="nav-link text-white d-flex align-items-center {{home}}" >
                 <i class="material-icons me-2">home</i>Home
             </a>
             </li>
 
             <li class="nav-item">
-            <a href="/medicine" class="nav-link  d-flex align-items-center " >
+            <a href="/medicine" class="nav-link  d-flex align-items-center {{medicine}}" >
                 <i class="material-icons me-2">medication</i>Medicine
             </a>
             </li>
             
             <li class="nav-item">
-            <a href="/analysis" class="nav-link d-flex align-items-center ">
+            <a href="/analysis" class="nav-link d-flex align-items-center {{analysis}}">
                 <i class="material-icons me-2 ">analytics</i>Analysis
             </a>
             </li>
 
             <li class="nav-item">
-            <a href="/profile" class="nav-link d-flex align-items-center ">
+            <a href="/profile" class="nav-link d-flex align-items-center {{profile}}">
                 <i class="material-icons me-2 ">person</i>Profile
             </a>
             </li>
