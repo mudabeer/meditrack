@@ -1,8 +1,9 @@
-from flask import Flask,render_template,request, redirect, session,url_for
+from flask import Flask,render_template,request, redirect, session,url_for, jsonify
 import mysql.connector
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "worldDomination@12"
@@ -32,21 +33,38 @@ def logout():
     session.clear()
     return redirect("/")
 
+@app.route("/editprofile")
+@login_required
+def editprofile():
+    return render_template("editprofile.html")
+
 @app.route("/dashboard")
 @login_required
 def dashboard():
     user_id = session["user_id"]
-    cursor.execute("""SELECT m.name as name,r.reminder_time as time,m.dose as dosage 
+    cursor.execute("""SELECT DISTINCT m.name as name,r.reminder_time as time,m.dose as dosage 
                    FROM medicine m JOIN reminder_logs r 
                    WHERE r.day_of_week  = substring(dayname(curdate()),1,2) AND m.user_id = %s"""
                    ,(user_id,))
     todayReminders = cursor.fetchall()
 
+    cursor.execute("""SELECT COUNT(id) as active FROM reminder_logs WHERE medicine_id in
+                        (SELECT id FROM medicine WHERE user_id = %s AND status = 'Active')"""
+                        ,(user_id,))
+    activeSch = cursor.fetchone()
+    if not activeSch:
+        activeSch = {"active":0}
+
     cursor.execute("SELECT count(id) as totalMedicine FROM Medicine WHERE  user_id = %s",(user_id,))
     totalMedicine = cursor.fetchone()
+    if not totalMedicine:
+        totalMedicine = {"totalMedicine":0}
 
     if not todayReminders:
-        return render_template("dashboard.html",totalMedicine=totalMedicine[0],home="active")
+        todayTotal={"todayReminders": 0}
+        upcomingReminders = {"upcomingReminder":0}
+
+        return render_template("dashboard.html",totalMedicine=totalMedicine,todayTotal=todayTotal,upcomingReminders=upcomingReminders,activeSch=activeSch,home="active")
     else:
         cursor.execute("""SELECT count(id) as upcomingReminder FROM reminder_logs WHERE medicine_id in  
                        (SELECT id FROM medicine WHERE user_id = %s) 
@@ -60,23 +78,54 @@ def dashboard():
                        ,(user_id,))
         todayTotal = cursor.fetchone()
 
-        cursor.execute("""SELECT COUNT(id) as active FROM reminder_logs WHERE medicine_id in
-                        (SELECT id FROM medicine WHERE user_id = %s AND status = 'Active')"""
-                        ,(user_id,))
-        activeSch = cursor.fetchone()
+        
 
         return render_template("dashboard.html",todayReminders=todayReminders,todayTotal=todayTotal,totalMedicine=totalMedicine,upcomingReminders=upcomingReminders,activeSch=activeSch,home="active")
 
 @app.route("/medicine", methods=["GET","POST"])
 @login_required
 def medicine():
-        user_id = session["user_id"]
-        cursor.execute("SELECT m.name,r.reminder_time,GROUP_CONCAT(DISTINCT r2.day_of_week ORDER BY r2.day_of_week) AS day_of_week FROM medicine m JOIN reminder_logs r on m.id = r.medicine_id JOIN reminder_logs r2 ON m.id = r2.medicine_id WHERE m.user_id = %s GROUP BY m.id,r.reminder_time ",(user_id,))
-        medicines = cursor.fetchall()
-        if not medicines :
-            return render_template("medicine.html",medicine="active")
+        if request.method == "POST":
+            data = request.get_json()
+
+            id = int(data["id"])
+            status = data["status"]
+
+            cursor.execute("SELECT * FROM reminders_table WHERE user_id = %s",(session["user_id"],))
+            reminders = cursor.fetchall()
+            reminderTime = reminders[id]["reminder_time"]
+            days = reminders[id]["day_of_week"].split(",")
+            values = ( session["user_id"],reminderTime,*days)
+            print(values)
+            if(not status):
+                cursor.execute(f"""UPDATE reminder_logs 
+                                set status = 'inactive' 
+                               WHERE medicine_id in (
+                               SELECT id FROM medicine WHERE user_id = %s)
+                            AND reminder_time = %s AND day_of_week in ({','.join(['%s'] * len(days))})""",
+                           values)
+                
+            else:
+                cursor.execute(f"""UPDATE reminder_logs 
+                                set status = 'active' WHERE medicine_id in 
+                            (SELECT id FROM medicine WHERE user_id = %s)
+                            AND reminder_time = %s AND day_of_week in ({','.join(['%s'] * len(days))})""",
+                            values)
+            
+            conn.commit()
+
+            return redirect("/medicine")
         else:
-            return render_template("medicine.html",medicines=medicines,medicine="active")
+
+            now = datetime.now()
+            user_id = session["user_id"]
+            cursor.execute("SELECT * FROM reminders_table WHERE user_id = %s",(user_id,))
+            medicines = cursor.fetchall()
+            if not medicines :
+                return render_template("medicine.html",medicine="active",now=now)
+            else:
+                numMedicine = len(medicines)
+                return render_template("medicine.html",medicines=medicines,medicine="active",now=now,numMedicine=numMedicine)
 
 @app.route("/addtime",methods=["GET","POST"])
 @login_required
@@ -84,25 +133,27 @@ def addtime():
     if request.method == "POST":
         medicine_name = request.form.get("medicine_name")
         if not medicine_name:
-            return render_template("medicine.html",message="invalid medicine_name",alert=True)
+            return render_template("addtime.html",message="invalid medicine_name",alert=True)
 
         hours = request.form.getlist("hour")
         mintues = request.form.getlist("mintue")
+        if not hours or not mintues:
+            return render_template("addtime.html",message="Invalid time",alert=True)
         times = []
         for i in range(len(hours)):
             if not hours[i]:
-                return render_template("medicine.html",message="invalid hour {i}",alert=True)
+                return render_template("addtime.html",message="invalid hour {i}",alert=True)
             if not mintues[i]:
-                return render_template("medicine.html",message="invalid mintues {i}",alert=True)
+                return render_template("addtime.html",message="invalid mintues {i}",alert=True)
             times.append(f"{hours[i]}:{mintues[i]}:00")
 
         dosage = request.form.get("dosage")
         if not dosage:
-            return render_template("medicine.html",message="invalid dosage",alert=True)
+            return render_template("addtime.html",message="invalid dosage",alert=True)
 
         days = request.form.getlist("day")
         if len(days)  < 0:
-            return render_template("medicine.html",message="select at least one day",alert=True)
+            return render_template("addtime.html",message="select at least one day",alert=True)
         
         user_id = session["user_id"]
 
@@ -110,7 +161,7 @@ def addtime():
         row = cursor.fetchall()
 
         if len(row) > 0:
-            return render_template("medicine.html",message="medicine already exist",alert=True)
+            return render_template("addtime.html",message="medicine already exist",alert=True)
         
         qurey = "INSERT INTO medicine (name,dose,user_id) VALUES (%s,%s,%s)"
         values = (medicine_name,dosage,user_id)
@@ -135,7 +186,52 @@ def addtime():
 @app.route("/analysis")
 @login_required
 def analysis():
-    return render_template("analysis.html",analysis="active")
+    days = ["su","mo","tu","we","th","fr","sa"]
+    values = [0,0,0,0,0,0,0]
+    active_per_day = [0,0,0,0,0,0,0]
+    inactive_per_day = [0,0,0,0,0,0,0]
+    totalAct = 0
+    totalInact = 0
+    medicineDistri = {}
+    nameMedicineDistri = []
+    totalMedicineDistri = []
+    
+
+    for i in range(len(days)):
+        cursor.execute("""SELECT COUNT(medicine_id) as total FROM reminder_logs WHERE day_of_week = %s AND medicine_id in 
+                       (SELECT id FROM medicine WHERE user_id = %s)""",(days[i],session["user_id"]))
+        data = cursor.fetchone()
+        if data:
+            values[i] = data["total"]
+    
+        cursor.execute("""SELECT COUNT(id) as active FROM reminder_logs WHERE day_of_week = %s AND status = 'active' AND  medicine_id in
+                        (SELECT id FROM medicine WHERE user_id = %s)""",(days[i],session["user_id"],))
+        activeSch = cursor.fetchone()
+        if activeSch:
+            active_per_day[i] = activeSch["active"]
+
+        cursor.execute("""SELECT COUNT(id) as inactive FROM reminder_logs WHERE day_of_week = %s AND status = 'inactive' AND medicine_id in
+                        (SELECT id FROM medicine WHERE user_id = %s )""",(days[i],session["user_id"],))
+        inactiveSch = cursor.fetchone()
+        if inactiveSch:
+            inactive_per_day[i] = inactiveSch["inactive"]
+
+        cursor.execute("SELECT m.name as name, count(*) as total FROM medicine m JOIN reminder_logs r ON m.id = r.medicine_id GROUP BY m.name")
+        medicineDistri = cursor.fetchall()
+
+    for medicine in medicineDistri:
+        nameMedicineDistri.append(str(medicine["name"]))
+        print( medicine["name"])
+        totalMedicineDistri.append(medicine["total"])
+        print(medicine["total"])
+
+
+    for i in range(len(active_per_day)):
+        totalAct += active_per_day[i]
+        totalInact += inactive_per_day[i]
+        
+
+    return render_template("analysis.html",analysis="active",values=values,days=days,active_per_day=active_per_day,inactive_per_day=inactive_per_day,totalAct=totalAct,totalInact=totalInact,nameMedicineDistri=nameMedicineDistri,totalMedicineDistri=totalMedicineDistri)
 
 @app.route("/profile")
 @login_required

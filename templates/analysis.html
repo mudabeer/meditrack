@@ -1,4 +1,36 @@
 {% extends "dashLayout.html" %}
 
 {% block main %}
+    <div class="container">
+        <h1 class="main-h1">Analysis Of Your Medicines</h1>
+        <p class="main-p">Analyse your medicines and stay on track with your health.</p>
+        <div class="basic-card m-4" >
+            <h2 class="mb-3">Per day total medicine</h2>
+            <canvas id="mychart" ></canvas>
+        </div>
+        <div class="basic-card m-4" >
+            <h2 class="mb-3">Active & Deactive reminders per day</h2>
+            <canvas id="chart"></canvas>
+        </div>
+        
+        <div>
+            <div class="row">
+                <div class="col col-lg-6 col-12">
+                    <div class="basic-card m-4 ">
+                        <h2 class="mb-3 text-center">Active Vs Deactive</h2>
+                        <canvas id="actInact" ></canvas>
+                    </div>
+                </div>
+                <div class="col col-lg-6 col-12">
+                    <div class="basic-card m-4">
+                        <h2 class="mb-3 text-center">Medicine Reminders</h2>
+                        <canvas id="medicineDistri"></canvas>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
 {% endblock %}

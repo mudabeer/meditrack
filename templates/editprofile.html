@@ -1,24 +1,26 @@
 {% extends "layout.html" %}
 
-
 {% block body %}
+
     <div class="container " >
         <div class="row justify-content-center">
             <div class="col-md-5 ">
                 <div class="card text-center mt-5 p-5   ">
                     <div class="headbox">
-                        <h1 class="title mb-5">Login</h1>
+                        <h1 class="title mb-5">Edit Profile</h1>
                     </div>
                      {% if alert %}
                     <div class="alert alert-danger" role="alert">
                         {{ message }}
                     </div>
                     {% endif %}
-                    <form action="/login" method="post">
+                    <form action="/editprofile" method="post">
                         <div class="row row-gap-3">
+                            <input type="file" name="profilePic" class="form-control" required placeholder="photo here" accept=".jpg,.png">
+
                             <div class="col col-12">
                                 <div class="input-group">
-                                    <div class="input-group-text"><span class="material-icons">email</span></div>
+                                    <div class="input-group-text">👤</div>
 
                                     <div class="form-floating">
                                         <input type="username" name="username" class="form-control" required placeholder="username here">
@@ -29,24 +31,32 @@
                             
                             <div class="col col-12">
                                 <div class="input-group">
-                                    <div class="input-group-text"><span class="material-icons">lock</span></div>
+                                    <div class="input-group-text">👤</div>
 
                                     <div class="form-floating">
-                                        <input type="password" name="password" class="form-control" required placeholder="password here">
-                                        <label for="password">Password</label>
-                                        <div class="invalid-feedback">invalid password</div>
-                                        <div class="valid-feedback">correct password</div>
+                                        <input type="name" name="full_name" class="form-control" required placeholder="Full anem here">
+                                        <label for="full_name">Full Name</label>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-12"><button class="btn btn-primary sub-button m-2">Login</button></div>
+                            <div class="col col-12">
+                                <div class="input-group">
+                                    <div class="input-group-text">✉️</div>
+
+                                    <div class="form-floating">
+                                        <input type="email" name="email" class="form-control" required placeholder="email here">
+                                        <label for="email">Email</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12"><button class="btn btn-primary sub-button m-2">Save</button></div>
                         </div>
                     </form>
-                        
-                    <label>Don't have an acccount? <a href="/register">Register</a></label>
                 </div>
             </div>
         </div>
     </div>
+
 {% endblock %}

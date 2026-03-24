@@ -7,15 +7,16 @@
 
             {% for medicine in medicines %}
                 <div class="col-12 col-lg-6">
-                <div class="basic-card d-flex flex-column gap-1">
+                <div class="medicine-card d-flex flex-column gap-1" id="card-{{ loop.index }}">
                     <div class="form-check form-switch ">
-                        <input class="form-check-input" type="checkbox" role="switch" id="Insulin" checked />
-                    </div>
 
-                    <h1>{{ medicine["reminder_time"] }}</h1>
+                    <input class="form-check-input" type="checkbox" role="switch" data-id="{{ loop.index }}" id="input-{{ loop.index }}" {% if medicine["status"] == 'active' %} checked {% endif %} />
+
+                    </div>
+                    <h1>{{ medicine["reminder_time"]}}</h1>
                     <span class="material-icons">alarm</span> 
-                    <p class="des-p">in 5 hours, 50 minutes</p>
-                    <h3 class="">{{ medicine["name"] }}</h3>
+                    <p class="des-p">in {{ now.strftime('%H')|int }} hours, 50 minutes</p>
+                    <h3 >{{ medicine["name"] }}</h3>
                     <p>{{ medicine["day_of_week"] }}</p>
                 </div>
             </div>

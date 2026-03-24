@@ -184,6 +184,7 @@ body {
     box-shadow:0 4px 10px rgb(0, 0, 0);
     transition: 2px 0.2s ease-in; 
 }
+
 .basic-card span {
     margin-bottom: 8px;
     font-size: 28px;
@@ -299,4 +300,25 @@ body {
 
 .add-time:hover {
     color: rgba(255, 255, 255, 0.543);
+    color: rgba(28, 116, 119, 0.873)
+}
+ .medicine-card{
+    color:#f0f6fc;
+    font-weight:600;
+    padding: 20px;
+    background: rgba(255,255,255,0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+    transition: all 0.3s ease;
+    border-radius: 20px;
+}
+
+.medicine-card:hover 
+{
+    color:#f0f6fcec;
+    background-color: #21262d4b;
+    border:1px solid #30363d34;
+    box-shadow:0 4px 10px rgb(0, 0, 0);
+    transition: 2px 0.2s ease-in;
 }
