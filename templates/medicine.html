@@ -6,7 +6,8 @@
         <div class="row medicine g-3">
 
             {% for medicine in medicines %}
-                <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-6">
+                <a href="/addtime" class="text-decoration-none">
                 <div class="medicine-card d-flex flex-column gap-1" id="card-{{ loop.index }}">
                     <div class="form-check form-switch ">
 
@@ -19,6 +20,7 @@
                     <h3 >{{ medicine["name"] }}</h3>
                     <p>{{ medicine["day_of_week"] }}</p>
                 </div>
+                </a>
             </div>
             {% endfor %}
         

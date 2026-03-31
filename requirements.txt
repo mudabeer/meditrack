@@ -1,1 +1,5 @@
 Flask
+mysql-connector-pyton
+werkzeug
+flask_socketio
+python-dotenv

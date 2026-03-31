@@ -4,9 +4,38 @@ import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from datetime import datetime
+from flask_socketio import SocketIO, emit
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
+
 
 app = Flask(__name__)
 app.secret_key = "worldDomination@12"
+
+socketio = SocketIO(app)
+
+@socketio.on('connect')
+def handle_connect():
+    print("Client connected")
+
+@socketio.on('toggle_status')
+def handle_toggle(data):
+    print("Received:", data)
+
+    # update DB here
+    id = data['id']
+    status = data['status']
+
+    # broadcast to all clients
+    emit('status_updated', data, broadcast=True)
+
 
 def login_required(f):
     @wraps(f)
@@ -18,10 +47,10 @@ def login_required(f):
 
 # configuration
 conn = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Mudabeer@2006",
-    database="meditrack"
+    host=DB_HOST,
+    user=DB_USER,
+    password=DB_PASSWORD,
+    database=DB_NAME
 )
 
 cursor = conn.cursor(dictionary=True, buffered=True)
@@ -33,7 +62,7 @@ def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/editprofile")
+@app.route("/editprofile",methods=["PSOT","GET"])
 @login_required
 def editprofile():
     return render_template("editprofile.html")
@@ -89,28 +118,32 @@ def medicine():
             data = request.get_json()
 
             id = int(data["id"])
+            id = id - 1
             status = data["status"]
 
             cursor.execute("SELECT * FROM reminders_table WHERE user_id = %s",(session["user_id"],))
             reminders = cursor.fetchall()
             reminderTime = reminders[id]["reminder_time"]
             days = reminders[id]["day_of_week"].split(",")
-            values = ( session["user_id"],reminderTime,*days)
+            medicine_name = reminders[id]["name"]
+            values = ( session["user_id"],reminderTime,medicine_name,*days)
             print(values)
             if(not status):
                 cursor.execute(f"""UPDATE reminder_logs 
                                 set status = 'inactive' 
-                               WHERE medicine_id in (
-                               SELECT id FROM medicine WHERE user_id = %s)
-                            AND reminder_time = %s AND day_of_week in ({','.join(['%s'] * len(days))})""",
+                               WHERE medicine_id in (SELECT id FROM medicine WHERE user_id = %s AND name = %s)
+                                AND reminder_time = %s AND day_of_week in ({','.join(['%s'] * len(days))}) 
+                            """,
                            values)
-                
+                print(f"actived {reminderTime},{days}")
             else:
                 cursor.execute(f"""UPDATE reminder_logs 
                                 set status = 'active' WHERE medicine_id in 
-                            (SELECT id FROM medicine WHERE user_id = %s)
-                            AND reminder_time = %s AND day_of_week in ({','.join(['%s'] * len(days))})""",
+                            (SELECT id FROM medicine WHERE user_id = %s AND name = %s)
+                            AND reminder_time = %s AND day_of_week in ({','.join(['%s'] * len(days))})
+                            """,
                             values)
+                print(f"inactived {reminderTime},{days}")
             
             conn.commit()
 

@@ -2,6 +2,8 @@ const medicine_switch = document.querySelectorAll(".form-check-input");
 if(medicine_switch){
          medicine_switch.forEach( e => {
         e.addEventListener('change', function(){
+            console.log(this.dataset.id)    
+            console.log(this.checked)
             fetch("/medicine",{
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
