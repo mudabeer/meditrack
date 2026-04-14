@@ -236,6 +236,22 @@ body {
     min-height: 490px;
 }
 
+.add-card {
+    position: fixed !important;
+    bottom: 24px !important;
+    right: 24px !important;
+    top: auto !important;
+    left: auto !important;
+    z-index: 9999;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 28px;
+    padding: 0;
+}
 
 .form-card{
     width:420px;

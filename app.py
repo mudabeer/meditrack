@@ -2,11 +2,14 @@ from flask import Flask,render_template,request, redirect, session,url_for, json
 import mysql.connector
 import re
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from functools import wraps
 from datetime import datetime
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room
 from dotenv import load_dotenv
 import os
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
 
 load_dotenv()
 
@@ -19,10 +22,23 @@ DB_NAME = os.getenv("DB_NAME")
 app = Flask(__name__)
 app.secret_key = "worldDomination@12"
 
+# Profile image upload settings
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 socketio = SocketIO(app)
+
+scheduler = BackgroundScheduler()
+atexit.register(lambda: scheduler.shutdown())
 
 @socketio.on('connect')
 def handle_connect():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        join_room(str(user_id))
     print("Client connected")
 
 @socketio.on('toggle_status')
@@ -45,6 +61,29 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def check_reminders():
+    with app.app_context():
+        now = datetime.now()
+        current_time = now.strftime('%H:%M:%S')
+        current_day = now.strftime('%a').lower()[:2]
+        
+        cursor.execute("""
+            SELECT r.medicine_id, m.user_id, m.name as medicine_name
+            FROM reminder_logs r
+            JOIN medicine m ON r.medicine_id = m.id
+            WHERE r.reminder_time = %s AND r.day_of_week LIKE %s AND r.status = 'active'
+        """, (current_time, f'%{current_day}%'))
+        reminders = cursor.fetchall()
+        
+        for reminder in reminders:
+            user_id = reminder['user_id']
+            medicine_name = reminder['medicine_name']
+            socketio.emit('reminder_notification', {'message': f'Time to take {medicine_name}!', 'medicine': medicine_name}, room=str(user_id))
+
 # configuration
 conn = mysql.connector.connect(
     host=DB_HOST,
@@ -57,23 +96,50 @@ cursor = conn.cursor(dictionary=True, buffered=True)
 
 days = ["su","mo","tu","we","th","fr","sa"]
 
+scheduler.add_job(check_reminders, 'interval', minutes=1)
+scheduler.start()
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/editprofile",methods=["PSOT","GET"])
+@app.route("/editprofile", methods=["GET", "POST"])
 @login_required
 def editprofile():
+    if request.method == "POST":
+        if 'profilePic' not in request.files:
+            return render_template("editprofile.html", alert=True, message="No file part")
+
+        file = request.files['profilePic']
+        if file.filename == '':
+            return render_template("editprofile.html", alert=True, message="No selected file")
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(save_path)
+
+            # store relative path in DB for use in templates
+            relative_path = os.path.join('static', 'uploads', filename)
+            cursor.execute("UPDATE users SET profile_pic = %s WHERE id = %s", (relative_path, session['user_id']))
+            conn.commit()
+
+            return redirect(url_for('profile'))
+
+        return render_template("editprofile.html", alert=True, message="Invalid file type")
+
     return render_template("editprofile.html")
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
     user_id = session["user_id"]
-    cursor.execute("""SELECT DISTINCT m.name as name,r.reminder_time as time,m.dose as dosage 
-                   FROM medicine m JOIN reminder_logs r 
-                   WHERE r.day_of_week  = substring(dayname(curdate()),1,2) AND m.user_id = %s"""
+    cursor.execute("""SELECT DISTINCT m.name as name, r.reminder_time as time, m.dose as dosage 
+                   FROM medicine m JOIN reminder_logs r ON r.medicine_id = m.id 
+                   WHERE r.day_of_week = substring(dayname(curdate()),1,2) 
+                     AND m.user_id = %s 
+                     AND r.status = 'active'"""
                    ,(user_id,))
     todayReminders = cursor.fetchall()
 
@@ -117,104 +183,143 @@ def medicine():
         if request.method == "POST":
             data = request.get_json()
 
-            id = int(data["id"])
-            id = id - 1
+            reminder_id = int(data["id"])
             status = data["status"]
+            new_status = 'active' if status else 'inactive'
 
-            cursor.execute("SELECT * FROM reminders_table WHERE user_id = %s",(session["user_id"],))
-            reminders = cursor.fetchall()
-            reminderTime = reminders[id]["reminder_time"]
-            days = reminders[id]["day_of_week"].split(",")
-            medicine_name = reminders[id]["name"]
-            values = ( session["user_id"],reminderTime,medicine_name,*days)
-            print(values)
-            if(not status):
-                cursor.execute(f"""UPDATE reminder_logs 
-                                set status = 'inactive' 
-                               WHERE medicine_id in (SELECT id FROM medicine WHERE user_id = %s AND name = %s)
-                                AND reminder_time = %s AND day_of_week in ({','.join(['%s'] * len(days))}) 
-                            """,
-                           values)
-                print(f"actived {reminderTime},{days}")
-            else:
-                cursor.execute(f"""UPDATE reminder_logs 
-                                set status = 'active' WHERE medicine_id in 
-                            (SELECT id FROM medicine WHERE user_id = %s AND name = %s)
-                            AND reminder_time = %s AND day_of_week in ({','.join(['%s'] * len(days))})
-                            """,
-                            values)
-                print(f"inactived {reminderTime},{days}")
-            
+            cursor.execute(
+                """UPDATE reminder_logs
+                SET status = %s
+                WHERE id = %s
+                  AND medicine_id IN (SELECT id FROM medicine WHERE user_id = %s)
+                """,
+                (new_status, reminder_id, session["user_id"])
+            )
             conn.commit()
 
-            return redirect("/medicine")
+            return jsonify(success=True)
         else:
 
             now = datetime.now()
             user_id = session["user_id"]
-            cursor.execute("SELECT * FROM reminders_table WHERE user_id = %s",(user_id,))
+            cursor.execute("""
+                SELECT r.id AS reminder_id, m.id AS medicine_id, m.name, m.dose, r.reminder_time, r.day_of_week, r.status
+                FROM reminder_logs r
+                JOIN medicine m ON r.medicine_id = m.id
+                WHERE m.user_id = %s
+            """, (user_id,))
             medicines = cursor.fetchall()
-            if not medicines :
-                return render_template("medicine.html",medicine="active",now=now)
+            if not medicines:
+                return render_template("medicine.html", medicine="active", now=now)
             else:
                 numMedicine = len(medicines)
-                return render_template("medicine.html",medicines=medicines,medicine="active",now=now,numMedicine=numMedicine)
+                return render_template("medicine.html", medicines=medicines, medicine="active", now=now, numMedicine=numMedicine)
 
 @app.route("/addtime",methods=["GET","POST"])
 @login_required
 def addtime():
+    user_id = session["user_id"]
+
     if request.method == "POST":
+        action = request.form.get("action", "save")
+        medicine_id = request.form.get("medicine_id")
         medicine_name = request.form.get("medicine_name")
+        dosage = request.form.get("dosage")
+
         if not medicine_name:
-            return render_template("addtime.html",message="invalid medicine_name",alert=True)
+            return render_template("addtime.html", message="invalid medicine_name", alert=True)
+        if not dosage:
+            return render_template("addtime.html", message="invalid dosage", alert=True)
+
+        reminder_id = request.form.get("reminder_id")
+
+        if action == "delete" and reminder_id:
+            cursor.execute("DELETE FROM reminder_logs WHERE id = %s", (reminder_id,))
+            conn.commit()
+            return redirect("/medicine")
+
+        if action == "delete" and medicine_id:
+            cursor.execute("DELETE FROM reminder_logs WHERE medicine_id = %s", (medicine_id,))
+            cursor.execute("DELETE FROM medicine WHERE id = %s AND user_id = %s", (medicine_id, user_id))
+            conn.commit()
+            return redirect("/medicine")
+
+        if reminder_id:
+            # Update the specific reminder log and its medicine metadata
+            cursor.execute("UPDATE medicine SET name = %s, dose = %s WHERE id = %s AND user_id = %s", (medicine_name, dosage, medicine_id, user_id))
+            cursor.execute("UPDATE reminder_logs SET reminder_time = %s, day_of_week = %s WHERE id = %s", (f"{request.form.get('hour')}:{request.form.get('mintue')}:00", ",".join(request.form.getlist('day')), reminder_id))
+            conn.commit()
+            return redirect("/medicine")
+
+        if medicine_id:
+            cursor.execute("UPDATE medicine SET name = %s, dose = %s WHERE id = %s AND user_id = %s", (medicine_name, dosage, medicine_id, user_id))
+            conn.commit()
+            return redirect("/medicine")
 
         hours = request.form.getlist("hour")
         mintues = request.form.getlist("mintue")
         if not hours or not mintues:
-            return render_template("addtime.html",message="Invalid time",alert=True)
+            return render_template("addtime.html", message="Invalid time", alert=True)
+
         times = []
         for i in range(len(hours)):
-            if not hours[i]:
-                return render_template("addtime.html",message="invalid hour {i}",alert=True)
-            if not mintues[i]:
-                return render_template("addtime.html",message="invalid mintues {i}",alert=True)
+            if not hours[i] or not mintues[i]:
+                return render_template("addtime.html", message=f"invalid time index {i}", alert=True)
             times.append(f"{hours[i]}:{mintues[i]}:00")
 
-        dosage = request.form.get("dosage")
-        if not dosage:
-            return render_template("addtime.html",message="invalid dosage",alert=True)
-
         days = request.form.getlist("day")
-        if len(days)  < 0:
-            return render_template("addtime.html",message="select at least one day",alert=True)
-        
-        user_id = session["user_id"]
+        if not days:
+            return render_template("addtime.html", message="select at least one day", alert=True)
 
-        cursor.execute("SELECT * FROM medicine WHERE name = %s AND user_id = %s",(medicine_name,user_id))
+        cursor.execute("SELECT * FROM medicine WHERE name = %s AND user_id = %s", (medicine_name, user_id))
         row = cursor.fetchall()
-
         if len(row) > 0:
-            return render_template("addtime.html",message="medicine already exist",alert=True)
-        
-        qurey = "INSERT INTO medicine (name,dose,user_id) VALUES (%s,%s,%s)"
-        values = (medicine_name,dosage,user_id)
-        cursor.execute(qurey,values)
-        conn.commit()
+            return render_template("addtime.html", message="medicine already exists", alert=True)
 
-        cursor.execute("SELECT * FROM medicine WHERE name = %s AND user_id = %s",(medicine_name,user_id))
-        medicine = cursor.fetchall()
+        cursor.execute("INSERT INTO medicine (name,dose,user_id) VALUES (%s,%s,%s)", (medicine_name, dosage, user_id))
+        conn.commit()
+        cursor.execute("SELECT id FROM medicine WHERE name = %s AND user_id = %s", (medicine_name, user_id))
+        medicine = cursor.fetchone()
+        print(medicine)
+        medicine_id = medicine["id"]
 
         for day in days:
             for time in times:
-                print(time,day)
-                qurey = "iNSERT INTO reminder_logs (medicine_id,reminder_time,day_of_week) VALUES (%s,%s,%s)"
-                values = (medicine[0]["id"],time,day)
-                cursor.execute(qurey,values)
-                conn.commit()
-                print("succesFUll")
+                cursor.execute("INSERT INTO reminder_logs (medicine_id,reminder_time,day_of_week) VALUES (%s,%s,%s)", (medicine_id, time, day))
+        conn.commit()
+
         return redirect("/medicine")
-    else:
-        return render_template("addtime.html")
+
+    # GET
+    medicine_id = request.args.get("medicine_id")
+    reminder_id = request.args.get("reminder_id")
+    medicine = None
+    reminder_days = []
+    reminder_times = []
+
+    if reminder_id:
+        cursor.execute("""
+            SELECT r.id AS reminder_id, r.reminder_time, r.day_of_week, m.id AS medicine_id, m.name, m.dose
+            FROM reminder_logs r
+            JOIN medicine m ON r.medicine_id = m.id
+            WHERE r.id = %s AND m.user_id = %s
+        """, (reminder_id, user_id))
+        row = cursor.fetchone()
+        if row:
+            medicine = {"id": row['medicine_id'], "name": row['name'], "dose": row['dose']}
+            reminder_times = [str(row['reminder_time'])]
+            reminder_days = row['day_of_week'].split(",") if row['day_of_week'] else []
+
+    elif medicine_id:
+        cursor.execute("SELECT id,name,dose FROM medicine WHERE id = %s AND user_id = %s", (medicine_id, user_id))
+        medicine = cursor.fetchone()
+        if medicine:
+            cursor.execute("SELECT reminder_time, day_of_week FROM reminder_logs WHERE medicine_id = %s", (medicine_id,))
+            reminders = cursor.fetchall()
+            reminder_days = [r["day_of_week"] for r in reminders]
+            reminder_times = [str(r["reminder_time"]) for r in reminders]
+
+    return render_template("addtime.html", medicine=medicine, reminder_id=reminder_id, reminder_days=reminder_days, reminder_times=reminder_times)
 
 @app.route("/analysis")
 @login_required

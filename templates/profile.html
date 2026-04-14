@@ -4,7 +4,7 @@
     <div class="row">
         <div class="col p-5">
             <div class="d-flex flex-row align-items-center gap-4">
-                <img class="profile-pic" src="https://imgs.search.brave.com/reX3qA0iXDc1KiPIF8g1h-xObqTr1FXE6lqbiyLyndY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNTg3/ODA1MDc4L3ZlY3Rv/ci9wcm9maWxlLXBp/Y3R1cmUtdmVjdG9y/LWlsbHVzdHJhdGlv/bi5qcGc_cz02MTJ4/NjEyJnc9MCZrPTIw/JmM9c1VDZHgtTGlr/cWU3ZUJFY2JuMUZU/OHliT1FRSFhEZ0JL/THNKYzk5TXRDQT0" alt="profile picture">
+                <img class="profile-pic" src="{{ user['profile_pic'] if user.get('profile_pic') else 'https://imgs.search.brave.com/reX3qA0iXDc1KiPIF8g1h-xObqTr1FXE6lqbiyLyndY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNTg3/ODA1MDc4L3ZlY3Rv/ci9wcm9maWxlLXBp/Y3R1cmUtdmVjdG9y/LWlsbHVzdHJhdGlv/bi5qcGc_cz02MTJ4/NjEyJnc9MCZrPTIw/JmM9c1VDZHgtTGlr/cWU3ZUJFY2JuMUZU/OHliT1FRSFhEZ0JL/THNKYzk5TXRDQT0' }}" alt="profile picture">
                 <div class="text-white">
                     <h3 class="m-0">{{ user["user_name"] }}</h3>
                     <p class="m-0 des-p">{{ user["full_name"] }}</p>

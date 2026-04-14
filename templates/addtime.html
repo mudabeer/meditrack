@@ -4,19 +4,25 @@
         <div class="pagebody ">
             <div class="d-flex align-items-center justify-content-center">
                 <div class="form-card">
-                <h2 >Edit alarm</h2>
+                <h2>{{ medicine and 'Edit medicine' or 'Add medicine' }}</h2>
                 <a class="material-icons overlay-close" href="/medicine">close</a>
                 {% if alert %}
                     <div class="alert alert-danger" role="alert">
                         {{ message }}
                     </div>
                 {% endif %}
-                <form action="/addtime" method="post" class="d-flex flex-column gap-4 pt-4" id="medicine-form"> 
+                <form action="/addtime" method="post" class="d-flex flex-column gap-4 pt-4" id="medicine-form">
+                    {% if medicine %}
+                        <input type="hidden" name="medicine_id" value="{{ medicine['id'] }}">
+                    {% endif %}
+                    {% if reminder_id %}
+                        <input type="hidden" name="reminder_id" value="{{ reminder_id }}">
+                    {% endif %}
 
                 <div class="input-group">
-                    <input type="number" class="form-control time-font " name="hour" value="00" min="00" max="24">
+                    <input type="number" class="form-control time-font " name="hour" value="{{ reminder_times[0].split(':')[0] if reminder_times else '00' }}" min="00" max="24">
                     <div class="input-group-text" style="font-size: 30px; font-weight: bold;">:</div>
-                    <input type="number" class="form-control time-font" name="mintue" value="00" min="00" max="59">
+                    <input type="number" class="form-control time-font" name="mintue" value="{{ reminder_times[0].split(':')[1] if reminder_times else '00' }}" min="00" max="59">
                     <span class="material-icons time-close  px-1" id="time-1">close</span>
                 </div>
                 
@@ -24,26 +30,26 @@
                 <div class="input-group ">
                     <div class="input-group-text material-icons pt-3" >medication</div>
                     <div class="form-floating">
-                        <input type="text" name = "medicine_name" id="medicine_name" class="form-control" required placeholder="medicine name" >
+                        <input type="text" name="medicine_name" id="medicine_name" class="form-control" required placeholder="medicine name" value="{{ medicine['name'] if medicine else '' }}">
                         <label for="medicine_name" class="text-dark">medicine name</label>
                     </div>
                 </div>
                 <div class="input-group ">
                     <div class="input-group-text material-icons pt-3" ></div>
                     <div class="form-floating">
-                        <input type="text" name = "dosage" class="form-control" required placeholder="dosage">
+                        <input type="text" name="dosage" class="form-control" required placeholder="dosage" value="{{ medicine['dose'] if medicine else '' }}">
                         <label for="medicine_name" class="text-dark">dosage (units/ml/mg/Tablet)</label>
                     </div>
                 </div>
 
                    <div class="days d-flex gap-2 flex-wrap">
-                        <input type="checkbox" name="day" value="su" class="form-check-input"> Su
-                        <input type="checkbox" name="day" value="mo" class="form-check-input"> Mo
-                        <input type="checkbox" name="day" value="tu" class="form-check-input"> Tu
-                        <input type="checkbox" name="day" value="we" class="form-check-input"> We
-                        <input type="checkbox" name="day" value="th" class="form-check-input"> Th
-                        <input type="checkbox" name="day" value="fr" class="form-check-input"> Fr
-                        <input type="checkbox" name="day" value="sa" class="form-check-input"> Sa
+                        <input type="checkbox" name="day" value="su" class="form-check-input" {% if 'su' in reminder_days %}checked{% endif %}> Su
+                        <input type="checkbox" name="day" value="mo" class="form-check-input" {% if 'mo' in reminder_days %}checked{% endif %}> Mo
+                        <input type="checkbox" name="day" value="tu" class="form-check-input" {% if 'tu' in reminder_days %}checked{% endif %}> Tu
+                        <input type="checkbox" name="day" value="we" class="form-check-input" {% if 'we' in reminder_days %}checked{% endif %}> We
+                        <input type="checkbox" name="day" value="th" class="form-check-input" {% if 'th' in reminder_days %}checked{% endif %}> Th
+                        <input type="checkbox" name="day" value="fr" class="form-check-input" {% if 'fr' in reminder_days %}checked{% endif %}> Fr
+                        <input type="checkbox" name="day" value="sa" class="form-check-input" {% if 'sa' in reminder_days %}checked{% endif %}> Sa
                     </div>
 
                 <hr>

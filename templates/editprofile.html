@@ -14,8 +14,8 @@
                         {{ message }}
                     </div>
                     {% endif %}
-                    <form action="/editprofile" method="post">
-                        <input type="file" name="profilePic" class="form-control" required placeholder="photo here" accept=".jpg,.png">
+                    <form action="/editprofile" method="post" enctype="multipart/form-data">
+                        <input type="file" name="profilePic" class="form-control" required placeholder="photo here" accept="image/*" capture="environment">
 
 
                             <div class="col-12"><button class="btn btn-primary sub-button m-2">Save</button></div>

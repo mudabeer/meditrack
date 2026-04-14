@@ -1,5 +1,6 @@
 Flask
-mysql-connector-pyton
+mysql-connector-python
 werkzeug
 flask_socketio
 python-dotenv
+APScheduler
